@@ -47,6 +47,52 @@ pos=[]
 player = 1
 winner = 0
 game_over= False
+# Button-related variables
+button_text = "Restart"  # Text on the button
+button_rect = p.Rect(screen_width // 2 - 100, GRID_Y + GRID_SIZE + 20, 200, 50)  # Position and size of the button
+button_font = p.font.SysFont("Arial", 30)  # Font for the button text
+button_color = (255, 255, 255)  # Color of the text (white for visibility)
+button_image = p.image.load("rectangle 1.png")  # Background image for the button
+
+def draw_grid():
+    """Draw the Tic-Tac-Toe grid centered on the screen."""
+    for i in range(1, 3):
+        p.draw.line(screen, GRID_COLOR, 
+                    (GRID_X, GRID_Y + i * CELL_SIZE), 
+                    (GRID_X + GRID_SIZE, GRID_Y + i * CELL_SIZE), 
+                    LINE_THICKNESS)
+
+        p.draw.line(screen, GRID_COLOR, 
+                    (GRID_X + i * CELL_SIZE, GRID_Y), 
+                    (GRID_X + i * CELL_SIZE, GRID_Y + GRID_SIZE), 
+                    LINE_THICKNESS)
+
+
+# Button-related functions
+def draw_button(text, rect, font, font_color, background_image, screen):
+    # Draw the background (shape) of the button (scaled to the rect size)
+    button_scaled = p.transform.scale(background_image, (rect.width, rect.height))  # Scale the image
+    screen.blit(button_scaled, (rect.x, rect.y))
+    
+    # Render the button text and center it within the button
+    rendered_text = font.render(text, True, font_color)
+    text_rect = rendered_text.get_rect(center=rect.center)
+    screen.blit(rendered_text, text_rect)
+
+def handle_button_click(button_rect, mouse_pos, action_function):
+    """Detects button click and calls the associated function."""
+    if button_rect.collidepoint(mouse_pos):
+        action_function()
+
+# Action for the restart button
+def restart_game():
+    global markers, player, game_over, winner
+    markers = [[0 for _ in range(3)] for _ in range(3)]  # Reset the grid
+    player = 1  # Set player 1 to start
+    game_over = False  # Reset game over flag
+    winner = 0  # No winner initially
+
+
 
 
 def draw_markers():
@@ -67,41 +113,34 @@ def check_winner():
     global game_over
     y_pos = 0
     for x in markers:
-        #check collumn
+        # Check columns
         if sum(x) == 3:
             winner = 1
             game_over = True
         if sum(x) == -3:
             winner = 2
             game_over = True
-            #check rows
-        if markers[0][y_pos] + markers[1][y_pos] +  markers[2][y_pos] == 3 :
+        # Check rows
+        if markers[0][y_pos] + markers[1][y_pos] +  markers[2][y_pos] == 3:
             winner = 1
             game_over = True
-        if markers[0][y_pos] + markers[1][y_pos] +  markers[2][y_pos] == -3 :
+        if markers[0][y_pos] + markers[1][y_pos] +  markers[2][y_pos] == -3:
             winner = 2
             game_over = True
         y_pos += 1
-    #check_cross
-    if markers[0][0] + markers[1][1] + markers[2][2] == 3 or markers[2][0] + markers[1][1] + markers[0][2] == 3 :
+    # Check diagonals
+    if markers[0][0] + markers[1][1] + markers[2][2] == 3 or markers[2][0] + markers[1][1] + markers[0][2] == 3:
         winner = 1
         game_over = True
-    if markers[0][0] + markers[1][1] + markers[2][2] == -3 or markers[2][0] + markers[1][1] + markers[0][2] == -3 :
+    if markers[0][0] + markers[1][1] + markers[2][2] == -3 or markers[2][0] + markers[1][1] + markers[0][2] == -3:
         winner = 2
         game_over = True
-
-def draw_grid():
-    """Draw the Tic-Tac-Toe grid centered on the screen."""
-    for i in range(1, 3):
-        p.draw.line(screen, GRID_COLOR, 
-                    (GRID_X, GRID_Y + i * CELL_SIZE), 
-                    (GRID_X + GRID_SIZE, GRID_Y + i * CELL_SIZE), 
-                    LINE_THICKNESS)
-
-        p.draw.line(screen, GRID_COLOR, 
-                    (GRID_X + i * CELL_SIZE, GRID_Y), 
-                    (GRID_X + i * CELL_SIZE, GRID_Y + GRID_SIZE), 
-                    LINE_THICKNESS)
+    
+    # Check for a draw (no winner, all cells filled)
+    if game_over == False and all(markers[row][col] != 0 for row in range(3) for col in range(3)):
+        game_over = True
+        winner = 0  # No winner, it's a draw
+        
 
 def page_1(overlay):
     """Main game loop for the Tic-Tac-Toe game."""
@@ -116,10 +155,21 @@ def page_1(overlay):
 
         # Display winner message above the grid if game_over is True
         if game_over:
-            font_win = p.font.Font(font_path, 36)  # Adjust font size
-            win_text = font_win.render(f"Player {winner} Wins!", True, (244,162,88))
-            win_rect = win_text.get_rect(center=(screen_width // 2, GRID_Y - 50))  # Position above the grid
+            font_win = p.font.Font(font_path, 36)  
+            if winner == 0:
+                win_text = font_win.render("It's a Draw!", True, (244, 162, 88))
+            else:
+                win_text = font_win.render(f"Player {winner} Wins!", True, (244, 162, 88))
+
+            win_rect = win_text.get_rect(center=(screen_width // 2, GRID_Y - 50)) 
             screen.blit(win_text, win_rect)
+            
+            draw_button(button_text, button_rect, button_font, button_color, button_image, screen)  # ✅ Draw Restart Button
+
+            
+            mouse_x, mouse_y = p.mouse.get_pos()
+            if button_rect.collidepoint(mouse_x, mouse_y) and p.mouse.get_pressed()[0]: 
+                restart_game()  
 
         for event in p.event.get():
             if event.type == p.QUIT:
@@ -147,17 +197,18 @@ def page_1(overlay):
 
 
 
+
     
 
 
-# main loop 
+# main loop
 run = True
 while run:
-    screen.fill((252,243,227))
+    screen.fill((252, 243, 227))
     screen.blit(overlay, (0, 0))
     screen.blit(text, text_rect)
-    
-     # Blit the shape 3 times, aligned vertically
+
+    # Blit the shape 3 times, aligned vertically
     screen.blit(shape, (screen_width // 2 - shape_width // 2, 350))  # First shape
     screen.blit(shape, (screen_width // 2 - shape_width // 2, 350 + shape_height + 10))  # Second shape
     screen.blit(shape, (screen_width // 2 - shape_width // 2, 350 + 2 * (shape_height + 10)))  # Third shape
@@ -166,30 +217,31 @@ while run:
     screen.blit(text1, text1_rect)
     screen.blit(text2, text2_rect)
     screen.blit(text3, text3_rect)
-    
+
     # Mouse click detection
     mouse_x, mouse_y = p.mouse.get_pos()  # Get the current mouse position
     mouse_pressed = p.mouse.get_pressed()  # Get the mouse button state (left, middle, right)
 
-    # Check if any shape is clicked
-    if mouse_pressed[0]:  # Left click
+    if mouse_pressed[0]:  # Left-click
         if text1_rect.collidepoint(mouse_x, mouse_y):  # Check if the click is inside the first rectangle
             print("First rectangle clicked")
-            page_1(overlay)  # Move to next page (or action)
+            page_1(overlay)  # Move to Tic-Tac-Toe page
         elif text2_rect.collidepoint(mouse_x, mouse_y):  # Check if the click is inside the second rectangle
             print("Second rectangle clicked")
-            page_2()  # Move to next page (or action)
+            page_2()  # If needed, handle the second page logic
         elif text3_rect.collidepoint(mouse_x, mouse_y):  # Check if the click is inside the third rectangle
             print("Third rectangle clicked")
-            page_3()  # Move to next page (or action)
-    
-    
-    
+            page_3()  # If needed, handle the third page logic
+
+    # If the game is over, draw the restart button
+    if game_over:
+        draw_button(button_text, button_rect, button_font, button_color, button_image, screen)
+
     for event in p.event.get():
         if event.type == p.QUIT:
             run = False
-            
-    p.display.update()
-            
 
+    p.display.update()
+
+            
 p.quit()
