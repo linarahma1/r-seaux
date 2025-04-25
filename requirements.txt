@@ -1,0 +1,15 @@
+# Core game dependencies
+pygame==2.5.2        # For game graphics/input
+pickle5==1.0.1       # For AI model serialization
+
+# Server-specific dependencies
+python-socketio==5.9.0  # Enhanced WebSocket support (optional but recommended)
+eventlet==0.33.3      # For async server performance (optional)
+
+# Compatibility
+numpy==1.26.4         # Often used by AI/RL libraries
+typing-extensions==4.9.0  # Type hints support
+
+# Development extras (uncomment if needed)
+# scikit-learn==1.4.0  # For retraining AI
+# gym==0.26.2          # For advanced RL environments
