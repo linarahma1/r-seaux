@@ -1,5 +1,8 @@
-tictactoe : Morpion Multimode en Python
+## PROJET TICTACTOE EN LIGNE ET AVEC AGENT DRL :
 
+Ce projet a été réalisé dans le cadre du cours "Fondement des Réseaux" à l'École Supérieure d'Économie Numérique (ESEN), Université de la Manouba (A.U 2024-2025).
+
+## description
 tictactoe est une application de morpion interactive développée en Python avec Pygame. Elle propose trois modes de jeu :  
 - Joueur contre joueur (local)
 - Joueur contre l’ordinateur (IA Q-learning)
@@ -61,6 +64,7 @@ python main.py
 ## Contributions
 
 Les contributions sont les bienvenues ! Proposez vos améliorations ou ouvrez une issue pour toute suggestion.
+
 
 ## Auteur
 
