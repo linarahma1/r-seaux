@@ -41,6 +41,7 @@ python main.py
 - **Jeu en ligne** : connectez-vous à un serveur et jouez contre un autre joueur distant.
 - **Redémarrer** : utilisez le bouton « Restart » pour recommencer une partie.
 
+
 ## Structure du projet
 
 ├── README.md                     # Documentation utilisateur ce fichier 
@@ -64,7 +65,6 @@ python main.py
 ## Contributions
 
 Les contributions sont les bienvenues ! Proposez vos améliorations ou ouvrez une issue pour toute suggestion.
-
 
 ## Auteur
 
